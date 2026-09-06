@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/samples/">
+    <Project Path="samples/CallNestingDemo/CallNestingDemo.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/ColdReview/ColdReview.csproj" />
+  </Folder>
+</Solution>

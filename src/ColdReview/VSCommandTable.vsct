@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <Extern href="stdidcmd.h"/>
+  <Extern href="vsshlids.h"/>
+  <Include href="KnownImageIds.vsct"/>
+
+  <Commands package="guidColdReviewPackage">
+    <Groups>
+      <Group guid="guidColdReviewCmdSet" id="ViewMenuGroup" priority="0x0600">
+        <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
+      </Group>
+      <Group guid="guidColdReviewCmdSet" id="ToolsMenuGroup" priority="0x0600">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS"/>
+      </Group>
+      <Group guid="guidColdReviewCmdSet" id="DebugMenuGroup" priority="0xF000">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_DEBUG"/>
+      </Group>
+    </Groups>
+
+    <Buttons>
+      <Button guid="guidColdReviewCmdSet" id="OpenCallNestingWindow" priority="0x0100" type="Button">
+        <Parent guid="guidColdReviewCmdSet" id="ViewMenuGroup"/>
+        <Icon guid="ImageCatalogGuid" id="CallStackWindow"/>
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <Strings>
+          <ButtonText>Cold Review</ButtonText>
+          <ToolTipText>Показать вложенность вызовов</ToolTipText>
+        </Strings>
+      </Button>
+      <Button guid="guidColdReviewCmdSet" id="OpenCallNestingWindowTools" priority="0x0100" type="Button">
+        <Parent guid="guidColdReviewCmdSet" id="ToolsMenuGroup"/>
+        <Icon guid="ImageCatalogGuid" id="CallStackWindow"/>
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <Strings>
+          <ButtonText>Cold Review</ButtonText>
+          <ToolTipText>Показать вложенность вызовов</ToolTipText>
+        </Strings>
+      </Button>
+      <Button guid="guidColdReviewCmdSet" id="OpenCallNestingWindowDebug" priority="0x0100" type="Button">
+        <Parent guid="guidColdReviewCmdSet" id="DebugMenuGroup"/>
+        <Icon guid="ImageCatalogGuid" id="CallHierarchy"/>
+        <CommandFlag>IconIsMoniker</CommandFlag>
+        <Strings>
+          <ButtonText>Cold Review: вложенность вызовов</ButtonText>
+          <ToolTipText>Показать, кто вызвал текущий метод и всю цепочку вверх</ToolTipText>
+        </Strings>
+      </Button>
+    </Buttons>
+  </Commands>
+
+  <KeyBindings>
+    <KeyBinding guid="guidColdReviewCmdSet" id="OpenCallNestingWindow" editor="guidVSStd97" key1="C" mod1="Control Shift Alt"/>
+  </KeyBindings>
+
+  <Symbols>
+    <GuidSymbol name="guidColdReviewPackage" value="{2b63e515-273b-4c70-a155-273dac925b30}" />
+    <GuidSymbol name="guidColdReviewCmdSet" value="{a91c4e7b-6d28-4f15-9c3a-e8b0d17f4c52}">
+      <IDSymbol name="ViewMenuGroup" value="0x1020" />
+      <IDSymbol name="ToolsMenuGroup" value="0x1021" />
+      <IDSymbol name="DebugMenuGroup" value="0x1030" />
+      <IDSymbol name="OpenCallNestingWindow" value="0x0100" />
+      <IDSymbol name="OpenCallNestingWindowTools" value="0x0102" />
+      <IDSymbol name="OpenCallNestingWindowDebug" value="0x0101" />
+    </GuidSymbol>
+  </Symbols>
+</CommandTable>

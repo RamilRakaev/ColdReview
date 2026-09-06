@@ -1,0 +1,169 @@
+<UserControl x:Class="ColdReview.ToolWindows.CallNestingControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:toolkit="clr-namespace:Community.VisualStudio.Toolkit;assembly=Community.VisualStudio.Toolkit"
+             xmlns:local="clr-namespace:ColdReview.ToolWindows"
+             xmlns:dbg="clr-namespace:ColdReview.Debugger"
+             xmlns:vsui="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
+             mc:Ignorable="d"
+             toolkit:Themes.UseVsTheme="True"
+             d:DesignHeight="480"
+             d:DesignWidth="420">
+  <UserControl.Resources>
+    <local:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
+    <SolidColorBrush x:Key="AccentBrush" Color="#2EC4B6"/>
+    <SolidColorBrush x:Key="AccentDimBrush" Color="#402EC4B6"/>
+    <SolidColorBrush x:Key="CurrentCardBrush" Color="#332EC4B6"/>
+
+    <Style x:Key="GhostButton" TargetType="Button">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowBorderBrushKey}}"/>
+      <Setter Property="Padding" Value="10,4"/>
+      <Setter Property="Margin" Value="0,0,8,0"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="3"
+                    Padding="{TemplateBinding Padding}">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </UserControl.Resources>
+
+  <Grid Background="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowBackgroundBrushKey}}">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+
+    <Border Grid.Row="0" Padding="12,10" BorderThickness="0,0,0,1"
+            BorderBrush="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowBorderBrushKey}}">
+      <StackPanel>
+        <TextBlock Text="Вложенность вызовов"
+                   FontSize="14"
+                   FontWeight="SemiBold"
+                   Foreground="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+        <TextBlock Text="{Binding Status}"
+                   TextWrapping="Wrap"
+                   Margin="0,4,0,0"
+                   Opacity="0.85"
+                   Foreground="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+        <TextBlock Text="{Binding Breadcrumb}"
+                   TextWrapping="Wrap"
+                   Margin="0,8,0,0"
+                   FontFamily="Cascadia Code, Consolas, Courier New"
+                   FontSize="11"
+                   Foreground="{StaticResource AccentBrush}"
+                   Visibility="{Binding Breadcrumb, Converter={StaticResource BoolToVisibility}}"/>
+      </StackPanel>
+    </Border>
+
+    <DockPanel Grid.Row="1" Margin="12,8,12,4">
+      <CheckBox Content="Только пользовательский код"
+                IsChecked="{Binding UserCodeOnly, Mode=TwoWay}"
+                VerticalAlignment="Center"
+                Foreground="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+        <Button Content="Копировать" Command="{Binding CopyPathCommand}" Style="{StaticResource GhostButton}"/>
+        <Button Content="Обновить" Command="{Binding RefreshCommand}" Style="{StaticResource GhostButton}"/>
+      </StackPanel>
+    </DockPanel>
+
+    <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Padding="12,4,12,12">
+      <ItemsControl ItemsSource="{Binding Frames}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate DataType="{x:Type dbg:CallFrameInfo}">
+            <StackPanel>
+              <Button Command="{Binding DataContext.ActivateFrameCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                      CommandParameter="{Binding}"
+                      HorizontalContentAlignment="Stretch"
+                      Cursor="Hand"
+                      Margin="0,0,0,0">
+                <Button.Style>
+                  <Style TargetType="Button">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Template">
+                      <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                          <Border x:Name="Card"
+                                  Background="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
+                                  BorderBrush="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowBorderBrushKey}}"
+                                  BorderThickness="1,1,1,1"
+                                  CornerRadius="4"
+                                  Padding="0">
+                            <Grid>
+                              <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="4"/>
+                                <ColumnDefinition Width="*"/>
+                              </Grid.ColumnDefinitions>
+                              <Border x:Name="Accent" Grid.Column="0" Background="#667A8A" CornerRadius="4,0,0,4"/>
+                              <StackPanel Grid.Column="1" Margin="10,8,10,8">
+                                <DockPanel>
+                                  <TextBlock DockPanel.Dock="Right"
+                                             Text="вы здесь"
+                                             FontSize="10"
+                                             FontWeight="SemiBold"
+                                             Foreground="{StaticResource AccentBrush}"
+                                             Visibility="{Binding IsCurrent, Converter={StaticResource BoolToVisibility}}"/>
+                                  <TextBlock Text="{Binding ShortName}"
+                                             FontWeight="SemiBold"
+                                             FontSize="13"
+                                             TextWrapping="Wrap"
+                                             Foreground="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+                                </DockPanel>
+                                <TextBlock Text="{Binding ArgumentsSummary}"
+                                           FontFamily="Cascadia Code, Consolas, Courier New"
+                                           FontSize="11"
+                                           Opacity="0.9"
+                                           TextWrapping="Wrap"
+                                           Margin="0,2,0,0"
+                                           Foreground="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowTextBrushKey}}"/>
+                                <TextBlock FontSize="11" Opacity="0.7" Margin="0,4,0,0"
+                                           Foreground="{DynamicResource {x:Static vsui:EnvironmentColors.ToolWindowTextBrushKey}}">
+                                  <Run Text="{Binding FileLabel, Mode=OneWay}"/>
+                                  <Run Text="  ·  "/>
+                                  <Run Text="{Binding Module, Mode=OneWay}"/>
+                                </TextBlock>
+                              </StackPanel>
+                            </Grid>
+                          </Border>
+                          <ControlTemplate.Triggers>
+                            <DataTrigger Binding="{Binding IsCurrent}" Value="True">
+                              <Setter TargetName="Card" Property="Background" Value="{StaticResource CurrentCardBrush}"/>
+                              <Setter TargetName="Card" Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+                              <Setter TargetName="Accent" Property="Background" Value="{StaticResource AccentBrush}"/>
+                            </DataTrigger>
+                          </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                      </Setter.Value>
+                    </Setter>
+                  </Style>
+                </Button.Style>
+              </Button>
+
+              <StackPanel Margin="18,2,0,8"
+                          Visibility="{Binding ShowCallerConnector, Converter={StaticResource BoolToVisibility}}">
+                <TextBlock Text="↓  вызвал"
+                           FontSize="11"
+                           Foreground="{StaticResource AccentBrush}"/>
+              </StackPanel>
+            </StackPanel>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
+  </Grid>
+</UserControl>
